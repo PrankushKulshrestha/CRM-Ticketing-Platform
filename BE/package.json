@@ -1,6 +1,9 @@
 {
   "name": "crm-helpdesk-backend",
   "version": "1.0.0",
+  "engines": {
+  "node": ">=22 <23"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc && tsc-alias",
