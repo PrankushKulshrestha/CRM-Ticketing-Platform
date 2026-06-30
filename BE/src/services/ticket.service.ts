@@ -689,7 +689,7 @@ export class TicketService {
 
     if (wasUnassigned && isNowAssigned) {
       try {
-        const { SLA } = await import("../models/SLA");
+        const { default: SLA } = await import("../models/SLA");
         const existing = await SLA.findOne({ ticketId: updated._id, status: { $in: ["active", "breached"] } }).lean();
         if (!existing) {
           const colorCode = (updated.color_code ?? TICKET_PRIORITY.MEDIUM) as TicketPriority;

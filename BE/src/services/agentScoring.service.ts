@@ -55,7 +55,7 @@ export async function computeAgentScores(period?: "monthly" | "weekly" | "all_ti
     since = new Date(0);
   }
 
-  const agents = await (User as mongoose.Model<{ _id: mongoose.Types.ObjectId; name: string; email: string; role: string }>)
+  const agents = await (User as unknown as mongoose.Model<{ _id: mongoose.Types.ObjectId; name: string; email: string; role: string }>)
     .find({ role: "agent", isActive: true })
     .lean();
 

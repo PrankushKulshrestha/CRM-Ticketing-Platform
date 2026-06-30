@@ -147,7 +147,7 @@ export async function getViolationsByAgent(
         as: "ticket",
       },
     },
-    { $unwind: { path: "$ticket", preserveNullAndEmpty: false } },
+    { $unwind: { path: "$ticket", preserveNullAndEmptyArrays: false } },
     {
       $group: {
         _id: "$ticket.tkt_assigned_to",
@@ -160,7 +160,7 @@ export async function getViolationsByAgent(
 
   // Hydrate agent names
   const agentIds = raw.map((r) => r._id).filter(Boolean);
-  const agents = await (User as mongoose.Model<{ _id: mongoose.Types.ObjectId; name: string; email: string }>)
+  const agents = await (User as unknown as mongoose.Model<{ _id: mongoose.Types.ObjectId; name: string; email: string }>)
     .find({ _id: { $in: agentIds } })
     .select("name email")
     .lean();
@@ -252,7 +252,7 @@ export async function getComplianceByTeam(
   // Per-team breakdown if "all" requested
   let byTeam: unknown[] = [];
   if (!teamId || teamId === "all") {
-    const teams = await (Team as mongoose.Model<{ _id: mongoose.Types.ObjectId; name: string }>)
+    const teams = await (Team as unknown as mongoose.Model<{ _id: mongoose.Types.ObjectId; name: string }>)
       .find()
       .select("name")
       .lean();
@@ -317,7 +317,7 @@ export async function getViolationsByStatus(
         as: "ticket",
       },
     },
-    { $unwind: { path: "$ticket", preserveNullAndEmpty: false } },
+    { $unwind: { path: "$ticket", preserveNullAndEmptyArrays: false } },
     {
       $group: {
         _id: "$ticket.tkt_status",
