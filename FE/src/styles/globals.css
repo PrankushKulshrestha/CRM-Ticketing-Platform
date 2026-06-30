@@ -1,0 +1,479 @@
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+
+@variant dark (&:where(.dark, .dark *));
+
+/* =========================================================
+   THEME TOKENS
+========================================================= */
+
+@theme inline {
+  /* Typography */
+  --font-heading: var(--font-sans);
+  --font-sans: "Geist Variable", sans-serif;
+
+  /* Core Colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Semantic (traffic-light system: SLA, status, alerts) */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --color-neutral: var(--neutral);
+  --color-neutral-foreground: var(--neutral-foreground);
+
+  /* Automation / Bot vs Human */
+  --color-automation: var(--automation);
+  --color-automation-foreground: var(--automation-foreground);
+
+  --color-human: var(--human);
+  --color-human-foreground: var(--human-foreground);
+
+  /* Spike / anomaly highlight (trend charts) */
+  --color-spike: var(--spike);
+
+  /* Categorical palette (RCA tags, ticket sources, categories) */
+  --color-cat-1: var(--cat-1);
+  --color-cat-2: var(--cat-2);
+  --color-cat-3: var(--cat-3);
+  --color-cat-4: var(--cat-4);
+  --color-cat-5: var(--cat-5);
+  --color-cat-6: var(--cat-6);
+
+  /* Dashboard */
+  --color-dashboard-bg: var(--dashboard-bg);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Radius System */
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.75);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.5);
+  --radius-2xl: calc(var(--radius) * 2);
+  --radius-3xl: calc(var(--radius) * 2.5);
+  --radius-4xl: calc(var(--radius) * 3);
+
+  /* Spacing System */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Shadows */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 16px 40px rgba(15, 23, 42, 0.12);
+  --shadow-xl: 0 24px 64px rgba(15, 23, 42, 0.16);
+
+  --shadow-dashboard:
+    0 10px 30px rgba(15, 23, 42, 0.08);
+
+  --shadow-glass:
+    0 8px 32px rgba(15, 23, 42, 0.08);
+
+  /* Layout */
+  --header-height: 4rem;
+  --sidebar-width: 17rem;
+  --content-width: 1440px;
+
+  /* Motion */
+  --ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --duration-fast: 120ms;
+  --duration-normal: 220ms;
+  --duration-slow: 420ms;
+}
+
+/* =========================================================
+   LIGHT MODE (dominant theme — white/pale-blue-grey surfaces,
+   dark navy sidebar, blue baseline for charts)
+========================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* Base */
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.18 0 0);
+
+  /* Surface - white cards, pale blue-grey secondary panels */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0 0);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0 0);
+
+  /* Brand - deep blue baseline, matches chart-1 */
+  --primary: oklch(0.5 0.17 255);
+  --primary-foreground: oklch(0.985 0 0);
+
+  /* Secondary panels - pale blue-grey, not plain grey */
+  --secondary: oklch(0.955 0.008 255);
+  --secondary-foreground: oklch(0.25 0.02 255);
+
+  --muted: oklch(0.96 0.006 255);
+  --muted-foreground: oklch(0.5 0.01 255);
+
+  /* Accent - light periwinkle, distinct from secondary/muted */
+  --accent: oklch(0.92 0.04 260);
+  --accent-foreground: oklch(0.3 0.06 260);
+
+  --destructive: oklch(0.6 0.24 25);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  /* Inputs */
+  --border: oklch(0.91 0.005 255);
+  --input: oklch(0.91 0.005 255);
+  --ring: oklch(0.65 0.05 255);
+
+  /* Semantic - traffic light system
+     Green = SLA met / fulfilled / fast resolution
+     Orange = average / warning threshold
+     Red = SLA violated / breach / critical alert */
+  --success: #22c55e;
+  --success-foreground: #ffffff;
+
+  --warning: #f97316;
+  --warning-foreground: #ffffff;
+
+  --danger: #ef4444;
+  --danger-foreground: #ffffff;
+
+  --info: #3b82f6;
+  --info-foreground: #ffffff;
+
+  /* Passive / neutral sentiment */
+  --neutral: #94a3b8;
+  --neutral-foreground: #ffffff;
+
+  /* Automation vs Human resolution */
+  --automation: #7c3aed;
+  --automation-foreground: #ffffff;
+
+  --human: #2563eb;
+  --human-foreground: #ffffff;
+
+  /* Spike / anomaly highlight on trend lines (bright azure) */
+  --spike: #38bdf8;
+
+  /* Categorical Palette A: Orange, Dark Blue/Indigo,
+     Light Periwinkle, Pale Yellow/Peach (+ 2 extensions
+     for 6-series charts) */
+  --cat-1: #1e3a8a; /* dark blue/indigo */
+  --cat-2: #f97316; /* orange */
+  --cat-3: #c7d2fe; /* light periwinkle */
+  --cat-4: #fde68a; /* pale yellow/peach */
+  --cat-5: #06b6d4; /* cyan, palette C extension */
+  --cat-6: #ec4899; /* pink/magenta, line-chart extension */
+
+  /* Dashboard */
+  --dashboard-bg: #f3f6fb;
+
+  /* Sidebar - dark navy contrast, per brief */
+  --sidebar: oklch(0.22 0.05 255);
+  --sidebar-foreground: oklch(0.985 0 0);
+
+  --sidebar-primary: oklch(0.6 0.17 255);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+
+  --sidebar-accent: oklch(0.3 0.06 255);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.7 0.05 255);
+
+  /* Charts - blue baseline for standard trends/bars,
+     remaining slots cover semantic + categorical needs */
+  --chart-1: #2563eb; /* deep blue baseline */
+  --chart-2: #38bdf8; /* bright azure */
+  --chart-3: #22c55e; /* success green */
+  --chart-4: #f97316; /* warning orange */
+  --chart-5: #ef4444; /* violation red */
+
+  /* Radius */
+  --radius: 0.875rem;
+}
+
+/* =========================================================
+   DARK MODE (used for Agent Performance / SLA panels —
+   deep navy/indigo background, bright green + blue-grey bars,
+   purple/cyan/blue/yellow categorical accents)
+========================================================= */
+
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.16 0.03 255);
+  --foreground: oklch(0.985 0 0);
+
+  --card: oklch(0.21 0.035 255);
+  --card-foreground: oklch(0.985 0 0);
+
+  --popover: oklch(0.21 0.035 255);
+  --popover-foreground: oklch(0.985 0 0);
+
+  /* Brand - lighter blue for contrast on deep navy */
+  --primary: oklch(0.7 0.15 255);
+  --primary-foreground: oklch(0.16 0.03 255);
+
+  --secondary: oklch(0.27 0.03 255);
+  --secondary-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.26 0.03 255);
+  --muted-foreground: oklch(0.72 0.02 255);
+
+  --accent: oklch(0.32 0.06 255);
+  --accent-foreground: oklch(0.92 0.03 255);
+
+  --destructive: oklch(0.7 0.19 22);
+  --destructive-foreground: oklch(0.16 0.03 255);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.6 0.05 255);
+
+  /* Semantic - traffic light system stays consistent,
+     brightened for dark backgrounds */
+  --success: #4ade80;
+  --success-foreground: #052e16;
+
+  --warning: #fb923c;
+  --warning-foreground: #451a03;
+
+  --danger: #f87171;
+  --danger-foreground: #450a0a;
+
+  --info: #60a5fa;
+  --info-foreground: #082f49;
+
+  /* Passive / neutral sentiment */
+  --neutral: #94a3b8;
+  --neutral-foreground: #0f172a;
+
+  /* Automation vs Human resolution */
+  --automation: #a78bfa;
+  --automation-foreground: #1e1b3a;
+
+  --human: #60a5fa;
+  --human-foreground: #082f49;
+
+  /* Spike / anomaly highlight on trend lines */
+  --spike: #22d3ee;
+
+  /* Palette C: Purple, Cyan, Blue, Yellow/Green
+     (dark-mode bar charts, per brief) */
+  --cat-1: #a78bfa; /* purple */
+  --cat-2: #22d3ee; /* cyan */
+  --cat-3: #60a5fa; /* blue */
+  --cat-4: #facc15; /* yellow/green */
+  --cat-5: #f472b6; /* pink/magenta, line-chart extension */
+  --cat-6: #4ade80; /* bright green, high-contrast bar accent */
+
+  /* Dashboard */
+  --dashboard-bg: #0c1424;
+
+  --sidebar: oklch(0.19 0.03 255);
+  --sidebar-foreground: oklch(0.985 0 0);
+
+  --sidebar-primary: oklch(0.7 0.15 255);
+  --sidebar-primary-foreground: oklch(0.16 0.03 255);
+
+  --sidebar-accent: oklch(0.28 0.04 255);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.6 0.05 255);
+
+  /* Charts - high-contrast bright green vs dark blueish-grey
+     bars (per brief), plus blue baseline + purple/cyan accents */
+  --chart-1: #60a5fa; /* blue baseline */
+  --chart-2: #4ade80; /* bright green, high-contrast */
+  --chart-3: #a78bfa; /* purple */
+  --chart-4: #22d3ee; /* cyan */
+  --chart-5: #f87171; /* violation red */
+}
+
+/* =========================================================
+   BASE LAYER
+========================================================= */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background:
+      radial-gradient(
+        circle at top left,
+        color-mix(in oklab, var(--primary) 10%, transparent),
+        transparent 30%
+      ),
+      radial-gradient(
+        circle at bottom right,
+        color-mix(in oklab, var(--info) 8%, transparent),
+        transparent 30%
+      ),
+      var(--dashboard-bg);
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--primary) 24%, white);
+  }
+}
+
+/* =========================================================
+   COMPONENT UTILITIES
+========================================================= */
+
+@layer utilities {
+  .glass {
+    background: color-mix(in oklab, var(--card) 75%, transparent);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    border: 1px solid color-mix(in oklab, var(--border) 70%, transparent);
+
+    box-shadow: var(--shadow-glass);
+  }
+
+  .dashboard-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-2xl);
+
+    box-shadow: var(--shadow-dashboard);
+  }
+
+  .content-container {
+    width: 100%;
+    max-width: var(--content-width);
+    margin-inline: auto;
+  }
+
+  .animate-enter {
+    animation: enter var(--duration-normal) var(--ease-smooth);
+  }
+
+  .animate-fade-in {
+    animation: fade-in var(--duration-normal) var(--ease-default);
+  }
+
+  .animate-scale-in {
+    animation: scale-in var(--duration-normal) var(--ease-smooth);
+  }
+
+  .scrollbar-hidden {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

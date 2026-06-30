@@ -1,0 +1,12 @@
+
+/* Reset Vite template styles - the app uses globals.css from src/styles/globals.css */
+body {
+  margin: 0;
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}

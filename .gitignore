@@ -1,0 +1,14 @@
+node_modules/
+dist/
+dist-ssr/
+build/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.vscode/
+.idea/
+*.tsbuildinfo
+.cache/
+.vite/
