@@ -3,6 +3,7 @@
 import { Link } from "react-router-dom";
 import { PriorityBadge } from "@/components/business/PriorityBadge";
 import { TicketStatusBadge } from "@/components/business/TicketStatusBadge";
+import { SLAIndicator } from "@/components/business/SLAIndicator";
 import type { Ticket } from "../types/ticket.types";
 
 /* -------------------------------------------------------------------------- */
@@ -60,6 +61,7 @@ export default function TicketTable({ tickets, isLoading }: TicketTableProps) {
             <th className="py-2 pr-4 font-medium">Assignee</th>
             <th className="py-2 pr-4 font-medium">Priority</th>
             <th className="py-2 pr-4 font-medium">Status</th>
+            <th className="py-2 pr-4 font-medium">SLA</th>
             <th className="py-2 pr-4 font-medium">Created</th>
           </tr>
         </thead>
@@ -95,6 +97,20 @@ export default function TicketTable({ tickets, isLoading }: TicketTableProps) {
               </td>
               <td className="py-3 pr-4">
                 <TicketStatusBadge status={ticket.tkt_status} />
+              </td>
+              <td className="py-3 pr-4">
+                {ticket.sla ? (
+                  <SLAIndicator
+                    dueAt={ticket.sla.resolutionDueAt}
+                    createdAt={ticket.created_date}
+                    breached={ticket.sla.isResolutionBreached}
+                    showProgress={false}
+                  />
+                ) : (
+                  <span className="text-xs text-muted-foreground">
+                    {ticket.assignee ? "Initializing…" : "Unassigned"}
+                  </span>
+                )}
               </td>
               <td className="py-3 pr-4 text-muted-foreground">
                 {formatDate(ticket.created_date)}

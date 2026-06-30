@@ -56,6 +56,7 @@ import {
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTicketHistory, mergeTicket, getPrintData } from "../api/ticketApi";
 import { QUERY_KEYS } from "@/lib/queryKeys";
+import { SLAIndicator } from "@/components/business/SLAIndicator";
 
 /* -------------------------------------------------------------------------
  * Helpers
@@ -72,23 +73,6 @@ export function formatTimestamp(value?: string | null): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return DATE_FORMATTER.format(date);
-}
-
-export function getSlaTone(remainingMinutes: number): string {
-  if (remainingMinutes <= 0) return "text-danger border-danger/30 bg-danger/10";
-  if (remainingMinutes <= 60) return "text-warning border-warning/30 bg-warning/10";
-  return "text-success border-success/30 bg-success/10";
-}
-
-export function formatSlaCountdown(remainingMinutes: number): string {
-  if (remainingMinutes <= 0) {
-    const overdue = Math.abs(Math.round(remainingMinutes));
-    return `Breached ${overdue}m ago`;
-  }
-  const hours = Math.floor(remainingMinutes / 60);
-  const minutes = Math.round(remainingMinutes % 60);
-  if (hours > 0) return `${hours}h ${minutes}m left`;
-  return `${minutes}m left`;
 }
 
 /* -------------------------------------------------------------------------
@@ -196,13 +180,11 @@ export default function TicketDetailsPage() {
 
   /* SLA */
   const sla = ticket.sla ?? null;
-  const remainingMinutes = sla ? sla.remainingMs / 60000 : 0;
 
   // Total SLA remaining = time until resolutionDueAt from now
   const totalRemainingMs = sla?.resolutionDueAt
     ? new Date(sla.resolutionDueAt).getTime() - Date.now()
     : null;
-  const totalRemainingMinutes = totalRemainingMs !== null ? totalRemainingMs / 60000 : 0;
 
   // Response deadline
   const responseRemainingMs = sla?.responseDueAt
@@ -748,18 +730,22 @@ export default function TicketDetailsPage() {
                 ) : (
                   <>
                     {/* Current level countdown */}
-                    <div className={`flex items-center gap-2 rounded-2xl border px-3 py-2.5 text-sm font-medium ${getSlaTone(remainingMinutes)}`}>
-                      <Clock className="h-4 w-4 shrink-0" />
-                      <span className="flex-1">
-                        Level {sla.currentLevel} — {formatSlaCountdown(remainingMinutes)}
-                      </span>
-                    </div>
+                    <SLAIndicator
+                      dueAt={sla.resolutionDueAt}
+                      createdAt={ticket.created_date}
+                      breached={sla.isResolutionBreached}
+                    />
 
-                    {/* Total SLA remaining (only meaningful if level > 1 or shows full picture) */}
+                    {/* Total SLA remaining (only meaningful if level > 1) */}
                     {sla.currentLevel > 1 && totalRemainingMs !== null && (
-                      <div className={`flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium ${getSlaTone(totalRemainingMinutes)}`}>
+                      <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-muted/30 px-3 py-2 text-xs font-medium text-muted-foreground">
                         <AlertCircle className="h-3.5 w-3.5 shrink-0" />
-                        <span>Total remaining: {formatSlaCountdown(totalRemainingMinutes)}</span>
+                        <span>
+                          Total remaining:{" "}
+                          {totalRemainingMs < 0
+                            ? `${Math.round(Math.abs(totalRemainingMs) / 60000)}m overdue`
+                            : `${Math.round(totalRemainingMs / 60000)}m left`}
+                        </span>
                       </div>
                     )}
 
@@ -771,15 +757,10 @@ export default function TicketDetailsPage() {
                           Response deadline:{" "}
                           {responseRemainingMs < 0
                             ? `${Math.round(Math.abs(responseRemainingMs) / 60000)}m overdue`
-                            : formatSlaCountdown(responseRemainingMs / 60000)}
+                            : `${Math.round(responseRemainingMs / 60000)}m left`}
                         </span>
                       </div>
                     )}
-
-                    {/* Due date */}
-                    <p className="text-[11px] text-muted-foreground px-1">
-                      Resolution due: {new Date(sla.resolutionDueAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
-                    </p>
                   </>
                 )
               ) : (

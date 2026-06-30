@@ -222,7 +222,8 @@ export async function getResolvedSLAForTicket(
         .lean<{ tkt_assigned_to?: unknown; color_code?: number; tkt_status?: string; created_date?: Date } | null>();
 
       const isActive = ticket && ticket.tkt_status !== "resolved" && ticket.tkt_status !== "closed";
-      if (ticket && isActive) {
+      const isAssigned = Boolean(ticket?.tkt_assigned_to);
+      if (ticket && isActive && isAssigned) {
         const colorCode = (ticket.color_code ?? TICKET_PRIORITY.MEDIUM) as TicketPriority;
         const startedAt = ticket.created_date ?? new Date();
         const created = await createSLAForTicket(new mongoose.Types.ObjectId(ticketId.toString()), colorCode, startedAt);
