@@ -7,31 +7,14 @@ import {
   User,
 } from "lucide-react";
 
+import { formatTimestamp } from "@/lib/utils";
+
 import type {
   DashboardActivity,
 } from "../types/dashboard.types";
 
 interface Props {
   activities?: DashboardActivity[];
-}
-
-function formatTimestamp(
-  value?: string | null,
-): string {
-  if (!value) {
-    return "Unknown";
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date);
 }
 
 function getStatusColor(

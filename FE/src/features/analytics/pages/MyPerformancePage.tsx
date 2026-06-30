@@ -1,6 +1,7 @@
 import React from "react";
 import { useAgentPerformanceById } from "../hooks/useAnalytics";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { TICKET_STATUS_COLOR } from "@/lib/utils";
 import {
   TrendingUp, CheckCircle2, Clock, AlertTriangle,
   Star, RefreshCw, UserCircle, Ticket,
@@ -103,13 +104,6 @@ export default function MyPerformancePage() {
     color_code?: number;
     created_date?: string;
   }>;
-
-  const statusColor: Record<string, string> = {
-    open: "bg-blue-500/15 text-blue-600",
-    pending: "bg-amber-500/15 text-amber-600",
-    resolved: "bg-emerald-500/15 text-emerald-600",
-    closed: "bg-slate-500/15 text-slate-500",
-  };
 
   return (
     <div className="space-y-6 p-6">
@@ -227,7 +221,7 @@ export default function MyPerformancePage() {
                     {t.email_subject ?? "—"}
                   </td>
                   <td className="px-4 py-2.5 text-center">
-                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${statusColor[t.tkt_status] ?? "bg-muted text-muted-foreground"}`}>
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${TICKET_STATUS_COLOR[t.tkt_status] ?? "bg-muted text-muted-foreground"}`}>
                       {t.tkt_status}
                     </span>
                   </td>

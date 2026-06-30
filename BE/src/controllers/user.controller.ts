@@ -7,6 +7,7 @@ import logger from "../config/logger";
 
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/ApiError";
+import { getPagination } from "../utils/pagination";
 import { HTTP_STATUS, USER_ROLES } from "../constants/constants";
 import { ROLES } from "../middlewares/rbac.middleware";
 
@@ -113,9 +114,10 @@ export const getAssignableUsers = asyncHandler(
 
 export const getUsers = asyncHandler(
   async (req: Request<{}, {}, {}, UserQuery>, res: Response): Promise<void> => {
-    const page = Math.max(Number(req.query.page) || 1, 1);
-    const limit = Math.min(Math.max(Number(req.query.limit) || 10, 1), 100);
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(req.query, {
+      defaultLimit: 10,
+      maxLimit: 100,
+    });
 
     const search = req.query.search?.trim();
 

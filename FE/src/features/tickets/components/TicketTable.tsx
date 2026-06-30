@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { PriorityBadge } from "@/components/business/PriorityBadge";
 import { TicketStatusBadge } from "@/components/business/TicketStatusBadge";
 import { SLAIndicator } from "@/components/business/SLAIndicator";
+import { truncate } from "@/lib/utils";
 import type { Ticket } from "../types/ticket.types";
 
 /* -------------------------------------------------------------------------- */
@@ -27,10 +28,6 @@ function formatDate(value?: string): string {
   });
 }
 
-function truncate(value: string | undefined, max = 30): string {
-  if (!value) return "—";
-  return value.length > max ? `${value.slice(0, max)}…` : value;
-}
 
 export default function TicketTable({ tickets, isLoading }: TicketTableProps) {
   if (isLoading) {
@@ -77,7 +74,7 @@ export default function TicketTable({ tickets, isLoading }: TicketTableProps) {
                 </Link>
               </td>
               <td className="py-3 pr-4 text-muted-foreground">
-                {truncate(ticket.description)}
+                {ticket.description ? truncate(ticket.description, 30) : "—"}
               </td>
               <td className="py-3 pr-4">
                 {ticket.tkt_customer_name || "—"}

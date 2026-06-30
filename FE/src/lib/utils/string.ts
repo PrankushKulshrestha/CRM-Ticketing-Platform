@@ -58,3 +58,15 @@ export function truncate(str: string, maxLength: number): string {
 export function normalise(str: string): string {
   return str.trim().toLowerCase();
 }
+
+// ---------------------------------------------------------------------------
+// Status color map
+// Previously duplicated identically in MyPerformancePage.tsx and AgentDetailPage.tsx
+// ---------------------------------------------------------------------------
+
+export const TICKET_STATUS_COLOR: Record<string, string> = {
+  open: "bg-blue-500/15 text-blue-600",
+  pending: "bg-amber-500/15 text-amber-600",
+  resolved: "bg-emerald-500/15 text-emerald-600",
+  closed: "bg-slate-500/15 text-slate-500",
+};

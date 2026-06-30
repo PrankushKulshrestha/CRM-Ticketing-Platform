@@ -19,7 +19,7 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 
-import { cn } from "@/lib/utils";
+import { cn, getInitials } from "@/lib/utils";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { useLogout } from "@/features/auth/hooks/useLogout";
 import routes from "@/config/routes";
@@ -43,20 +43,6 @@ interface MenuItem {
 interface MenuGroup {
   title: string;
   items: readonly MenuItem[];
-}
-
-/* -------------------------------------------------------------------------- */
-/* Helpers                                                                    */
-/* -------------------------------------------------------------------------- */
-
-function getInitials(name?: string): string {
-  if (!name) return "??";
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -167,7 +153,7 @@ export default function Sidebar(): React.ReactElement {
       .filter((group) => group.items.length > 0);
   }, [menuGroups, role]);
 
-  const initials = getInitials(user?.name);
+  const initials = getInitials(user?.name ?? "");
 
   /* ---------------------------------------------------------------------- */
   /* Actions                                                                */

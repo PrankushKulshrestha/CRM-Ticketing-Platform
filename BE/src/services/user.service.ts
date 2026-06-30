@@ -5,6 +5,7 @@ import logger from "../config/logger";
 
 import { ApiError } from "../utils/ApiError";
 import { HTTP_STATUS, USER_ROLES } from "../constants/constants";
+import { getPagination } from "../utils/pagination";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                      */
@@ -90,14 +91,10 @@ export class UserService {
   /* ---------------------------------------------------------------------- */
 
   static async getUsers(filters: UserFilters) {
-    const page = Math.max(Number(filters.page) || DEFAULT_PAGE, 1);
-
-    const limit = Math.min(
-      Math.max(Number(filters.limit) || DEFAULT_LIMIT, 1),
-      MAX_LIMIT
+    const { page, limit, skip } = getPagination(
+      { page: filters.page, limit: filters.limit },
+      { defaultPage: DEFAULT_PAGE, defaultLimit: DEFAULT_LIMIT, maxLimit: MAX_LIMIT },
     );
-
-    const skip = (page - 1) * limit;
 
     const query = buildUserQuery(filters);
 

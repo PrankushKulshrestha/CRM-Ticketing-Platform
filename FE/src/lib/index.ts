@@ -32,6 +32,7 @@ export {
   formatLabel,
   truncate,
   normalise,
+  TICKET_STATUS_COLOR,
 } from "@/lib/utils/string";
 
 // Number helpers

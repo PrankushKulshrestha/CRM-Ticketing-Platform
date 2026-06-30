@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import AutomationRuleModel from "../models/AutomationRule";
 import TicketModel from "../models/Ticket";
 import { ApiError } from "../utils/ApiError";
+import { getPagination } from "../utils/pagination";
 import logger from "../config/logger";
 
 import type {
@@ -183,9 +184,10 @@ export class AutomationService {
   static async getRules(
     filters: AutomationFilters,
   ): Promise<AutomationResult> {
-    const page = filters.page && filters.page > 0 ? filters.page : 1;
-    const limit = filters.limit && filters.limit > 0 ? filters.limit : 20;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(
+      { page: filters.page, limit: filters.limit },
+      { defaultLimit: 20, maxLimit: Number.MAX_SAFE_INTEGER },
+    );
 
     const query: Record<string, unknown> = {};
     if (typeof filters.enabled === "boolean") {

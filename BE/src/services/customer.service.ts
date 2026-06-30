@@ -2,6 +2,7 @@
 import mongoose, { type PipelineStage } from "mongoose";
 import TicketModel from "../models/Ticket";
 import { ApiError } from "../utils/ApiError";
+import { getPagination } from "../utils/pagination";
 import { TICKET_STATUS } from "../constants/constants";
 
 import type {
@@ -50,9 +51,10 @@ export class CustomerService {
   static async getCustomers(
     filters: CustomerFilters,
   ): Promise<CustomersResult> {
-    const page = filters.page && filters.page > 0 ? filters.page : 1;
-    const limit = filters.limit && filters.limit > 0 ? filters.limit : 20;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(
+      { page: filters.page, limit: filters.limit },
+      { defaultLimit: 20, maxLimit: Number.MAX_SAFE_INTEGER },
+    );
 
     const match: Record<string, unknown> = {
       eml_ticket_created_for: { $exists: true, $nin: [null, ""] },

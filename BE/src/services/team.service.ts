@@ -4,6 +4,7 @@ import TeamModel from "../models/Team";
 import TicketModel from "../models/Ticket";
 import UserModel from "../models/User";
 import { ApiError } from "../utils/ApiError";
+import { getPagination } from "../utils/pagination";
 import { TICKET_STATUS } from "../constants/constants";
 
 import type {
@@ -94,9 +95,10 @@ const toTeam = (doc: LeanTeam, stats: AgentStats): Team => ({
 
 export class TeamService {
   static async getTeams(filters: TeamFilters): Promise<TeamsResult> {
-    const page = filters.page && filters.page > 0 ? filters.page : 1;
-    const limit = filters.limit && filters.limit > 0 ? filters.limit : 20;
-    const skip = (page - 1) * limit;
+    const { page, limit, skip } = getPagination(
+      { page: filters.page, limit: filters.limit },
+      { defaultLimit: 20, maxLimit: Number.MAX_SAFE_INTEGER },
+    );
 
     const query: Record<string, unknown> = {};
     if (filters.search) {

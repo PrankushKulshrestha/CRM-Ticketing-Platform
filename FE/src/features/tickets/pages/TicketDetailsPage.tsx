@@ -57,23 +57,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getTicketHistory, mergeTicket, getPrintData } from "../api/ticketApi";
 import { QUERY_KEYS } from "@/lib/queryKeys";
 import { SLAIndicator } from "@/components/business/SLAIndicator";
+import { formatTimestamp } from "@/lib/utils";
 
 /* -------------------------------------------------------------------------
  * Helpers
  * ---------------------------------------------------------------------- */
-const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
-  month: "short",
-  day: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-export function formatTimestamp(value?: string | null): string {
-  if (!value) return "-";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return DATE_FORMATTER.format(date);
-}
 
 /* -------------------------------------------------------------------------
  * All ticket statuses — used in every dropdown throughout the app

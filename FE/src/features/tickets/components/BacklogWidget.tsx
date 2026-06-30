@@ -6,13 +6,6 @@ import { PriorityBadge } from "@/components/business/PriorityBadge";
 import { getBacklog } from "../api/ticketApi";
 import { Link } from "react-router-dom";
 
-const PRIORITY_LABELS: Record<number, string> = { 1: "Low", 2: "Medium", 3: "High", 4: "Urgent" };
-const PRIORITY_COLORS: Record<number, string> = {
-  1: "bg-slate-100 text-slate-600",
-  2: "bg-blue-100 text-blue-700",
-  3: "bg-orange-100 text-orange-700",
-  4: "bg-red-100 text-red-700",
-};
 
 export default function BacklogWidget() {
   const { data, isLoading, isError } = useQuery({
@@ -73,9 +66,7 @@ export default function BacklogWidget() {
           <div className="flex flex-col gap-1.5">
             {byPriority.map((p) => (
               <div key={p._id} className="flex items-center justify-between">
-                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${PRIORITY_COLORS[p._id] ?? "bg-muted text-muted-foreground"}`}>
-                  {PRIORITY_LABELS[p._id] ?? p._id}
-                </span>
+                <PriorityBadge priority={p._id} showIcon={false} />
                 <span className="text-sm font-semibold">{p.count}</span>
               </div>
             ))}
