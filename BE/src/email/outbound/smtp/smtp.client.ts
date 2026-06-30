@@ -53,6 +53,16 @@ async function createTransport(): Promise<Transporter> {
     maxConnections: 5,
     maxMessages: 100,
 
+    // FIX: nodemailer's default connection/greeting/socket timeouts add up
+    // to ~2 minutes when the SMTP host is unreachable or blocked at the
+    // network level (common on PaaS egress). That blocked the whole server
+    // boot sequence (see server.ts) before it was reordered to bind HTTP
+    // first — keeping these short means a bad SMTP config now fails in
+    // ~10s instead of stalling startup.
+    connectionTimeout: 10_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 10_000,
+
     logger: false,
     debug: false,
   });

@@ -97,6 +97,13 @@ if (env.features.enableMorgan) {
 
 app.use(`${API_PREFIX}/health`, healthRoutes);
 
+/* Render (and most PaaS) ping "/" by default for platform health checks,
+   separate from our versioned /api/v1/health. Without this every ping
+   was logged as a 404 ROUTE_NOT_FOUND warning. */
+app.get("/", (_req, res) => {
+  res.status(200).json({ success: true, status: "ok" });
+});
+
 app.use(`${API_PREFIX}/auth`, authRoutes);
 app.use(`${API_PREFIX}/users`, userRoutes);
 app.use(`${API_PREFIX}/tickets`, ticketRoutes);

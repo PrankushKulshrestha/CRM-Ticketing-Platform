@@ -116,13 +116,11 @@ async function bootstrap(): Promise<void> {
       logger.warn("[STARTUP_SLA_POLICY_REPAIR_FAILED]", { slaRepairErr });
     }
 
-    /* 2. OUTBOUND EMAIL WORKER */
-    await startEmailWorker();
-
-    /* 3. EMAIL SYSTEM (IMAP + PIPELINE INIT) */
-    await initEmailSystem();
-
-    /* 4. HTTP SERVER */
+    /* 2. HTTP SERVER — bind immediately once DB is ready. Email system
+     * init (SMTP/IMAP) runs after, in the background, and is fully
+     * non-fatal: a slow or unreachable mail host must never delay the
+     * server coming online (this previously stalled Render's port-scan
+     * by ~2 minutes whenever SMTP_HOST was unreachable). */
     server.listen(env.app.port, () => {
       logBanner("CRM HELPDESK SERVER STARTED", [
         `Environment : ${env.app.env}`,
@@ -131,14 +129,31 @@ async function bootstrap(): Promise<void> {
         `Client URL  : ${env.app.clientUrl}`,
         `Socket      : enabled`,
         `DB          : connected`,
-        `EMAIL       : IMAP + pipeline active`,
-        `WORKERS     : outbound email worker running`,
+        `EMAIL       : initializing in background…`,
+        `WORKERS     : starting…`,
       ]);
     });
 
     server.on("error", (err) => {
       console.error("[SERVER_ERROR]", err);
     });
+
+    /* 3. OUTBOUND EMAIL WORKER + EMAIL SYSTEM (IMAP + PIPELINE) — fire and
+     * forget relative to bootstrap; failures here are logged, not fatal,
+     * and must never bring down an already-listening HTTP server. */
+    void (async () => {
+      try {
+        await startEmailWorker();
+      } catch (err) {
+        logger.error("[OUTBOUND_WORKER_START_FAILED]", { err });
+      }
+
+      try {
+        await initEmailSystem();
+      } catch (err) {
+        logger.error("[EMAIL_SYSTEM_INIT_FAILED]", { err });
+      }
+    })();
   } catch (err) {
     console.error("[BOOTSTRAP_FAILED]", err);
     process.exit(1);
