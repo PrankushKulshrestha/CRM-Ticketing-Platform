@@ -129,7 +129,7 @@ const rawConfig: EnvConfig = {
   app: {
     name: optional("APP_NAME", "CRM Helpdesk Platform"),
     env: nodeEnv(),
-    port: number("PORT", 5000),
+    port: number("PORT", Number(process.env.PORT) || 5000),
     apiPrefix: optional("API_PREFIX", "/api/v1"),
     clientUrl: optional("CLIENT_URL", "http://localhost:5173"),
   },
