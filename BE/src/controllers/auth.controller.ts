@@ -52,8 +52,17 @@ const sanitizeUser = (user: any) => {
   // handles mongoose doc safely
   const obj = typeof user.toObject === "function" ? user.toObject() : user;
 
-  const { password, __v, ...safe } = obj;
-  return safe;
+  const { password, __v, _id, ...safe } = obj;
+
+  // FIX: FE's AuthUser type (and the JWT payload built above) both key off
+  // `userId`, but this previously spread the raw Mongoose doc as-is, which
+  // only has `_id`. Every screen reading `user.userId` (e.g. MyPerformancePage)
+  // silently got `undefined` and either disabled its query forever or showed
+  // an empty/error state, even for agents with real assigned tickets.
+  return {
+    userId: _id?.toString?.() ?? _id,
+    ...safe,
+  };
 };
 
 const buildJwtPayload = (user: any): JwtPayload => ({
