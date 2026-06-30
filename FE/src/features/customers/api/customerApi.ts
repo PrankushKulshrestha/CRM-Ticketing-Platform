@@ -17,9 +17,9 @@ export const customerApi = {
     // Return the full envelope — CustomersResponse = ApiListResponse<Customer>
     // which requires { success, data, meta }
     return {
-      success: res.data.success ?? true,
-      data: res.data.data,
-      meta: res.data.meta,
+      success: res.success ?? true,
+      data: res.data,
+      meta: res.meta,
     };
   },
 
@@ -27,6 +27,6 @@ export const customerApi = {
     const res = await apiClient.get<{ success: boolean; data: Customer }>(
       `/customers/${id}`,
     );
-    return res.data.data;
+    return res.data;
   },
 };

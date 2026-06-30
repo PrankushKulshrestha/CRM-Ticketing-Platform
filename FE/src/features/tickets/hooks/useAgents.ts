@@ -26,7 +26,7 @@ interface ApiResponse<T> {
 
 async function fetchAssignableAgents(): Promise<Agent[]> {
   const res = await apiClient.get<ApiResponse<Agent[]>>("/users/assignable");
-  return res.data.data;
+  return res.data;
 }
 
 export function useAgents() {

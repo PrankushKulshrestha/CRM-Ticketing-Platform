@@ -12,6 +12,6 @@ export const reportApi = {
     const res = await apiClient.get<{ success: boolean; data: ReportData }>(
       `/reports/summary?${params.toString()}`,
     );
-    return res.data.data;
+    return res.data;
   },
 };

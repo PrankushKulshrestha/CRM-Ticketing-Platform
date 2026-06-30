@@ -24,12 +24,12 @@ interface ApiResponse<T> {
 
 export async function getSLAPolicy(): Promise<SLAPolicy> {
   const res = await apiClient.get<ApiResponse<SLAPolicy>>("/sla/policy");
-  return res.data.data;
+  return res.data;
 }
 
 export async function updateSLAPolicy(
   payload: Partial<Pick<SLAPolicy, "byPriority" | "escalationMinutes">>,
 ): Promise<SLAPolicy> {
   const res = await apiClient.patch<ApiResponse<SLAPolicy>>("/sla/policy", payload);
-  return res.data.data;
+  return res.data;
 }

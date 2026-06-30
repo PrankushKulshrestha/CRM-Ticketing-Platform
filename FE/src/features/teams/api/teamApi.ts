@@ -26,9 +26,9 @@ export const teamApi = {
     );
 
     return {
-      success: res.data.success ?? true,
-      data: res.data.data,
-      meta: res.data.meta,
+      success: res.success ?? true,
+      data: res.data,
+      meta: res.meta,
     };
   },
 
@@ -36,7 +36,7 @@ export const teamApi = {
     const res = await apiClient.get<{ success: boolean; data: Team }>(
       `/teams/${id}`,
     );
-    return res.data.data;
+    return res.data;
   },
 
   async createTeam(payload: CreateTeamPayload): Promise<Team> {
@@ -44,7 +44,7 @@ export const teamApi = {
       "/teams",
       payload,
     );
-    return res.data.data;
+    return res.data;
   },
 
   async updateTeamMembers(
@@ -55,6 +55,6 @@ export const teamApi = {
       `/teams/${id}/members`,
       payload,
     );
-    return res.data.data;
+    return res.data;
   },
 };

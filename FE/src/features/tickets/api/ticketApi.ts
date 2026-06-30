@@ -32,8 +32,8 @@ interface ApiResponse<T> {
 /* Internal Helpers                                                         */
 /* -------------------------------------------------------------------------- */
 
-function unwrap<T>(response: { data: ApiResponse<T> }): T {
-  return response.data.data;
+function unwrap<T>(response: ApiResponse<T>): T {
+  return response.data;
 }
 
 /* Centralized status updater */
@@ -68,7 +68,7 @@ class TicketApiService {
       params: filters,
     });
 
-    return res.data;
+    return res;
   }
 
   /* ---------------------------------------------------------------------- */

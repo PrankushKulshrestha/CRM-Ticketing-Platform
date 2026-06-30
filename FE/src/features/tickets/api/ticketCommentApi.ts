@@ -66,7 +66,7 @@ export async function getTicketComments(
     `/tickets/${ticketId}/comments`,
   );
 
-  return response.data.data.map(toTicketComment);
+  return response.data.map(toTicketComment);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -86,7 +86,7 @@ export async function addTicketComment(
       },
     );
 
-    return toTicketComment(response.data.data);
+    return toTicketComment(response.data);
   } catch (error) {
     console.error("[Ticket API] Failed to add comment", error);
 

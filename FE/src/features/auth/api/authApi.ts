@@ -29,7 +29,7 @@ export const authApi = {
       payload,
     );
 
-    return response.data;
+    return response;
   },
 
   /* ------------------------------------------------------------------------ */
@@ -42,7 +42,7 @@ export const authApi = {
       payload,
     );
 
-    return response.data;
+    return response;
   },
 
   /* ------------------------------------------------------------------------ */
@@ -52,7 +52,7 @@ export const authApi = {
   async getCurrentUser(): Promise<AuthUser> {
     const response = await apiClient.get<CurrentUserResponse>("/auth/me");
 
-    return response.data.user;
+    return response.user;
   },
 
   /* ------------------------------------------------------------------------ */
@@ -62,7 +62,7 @@ export const authApi = {
   async logout(): Promise<LogoutResponse> {
     const response = await apiClient.post<LogoutResponse>("/auth/logout");
 
-    return response.data;
+    return response;
   },
 
   /* ------------------------------------------------------------------------ */
@@ -77,7 +77,7 @@ export const authApi = {
       },
     );
 
-    return response.data;
+    return response;
   },
 };
 

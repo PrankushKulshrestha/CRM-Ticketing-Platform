@@ -4,6 +4,7 @@
 import axios, {
   AxiosError,
   AxiosHeaders,
+  type AxiosRequestConfig,
   type InternalAxiosRequestConfig,
 } from "axios";
 
@@ -45,7 +46,7 @@ const BASE_URL =
 /* Axios Instance                                                             */
 /* -------------------------------------------------------------------------- */
 
-export const apiClient = axios.create({
+const axiosInstance = axios.create({
   baseURL: BASE_URL,
 
   timeout: 30_000,
@@ -61,7 +62,7 @@ export const apiClient = axios.create({
 /* Request Interceptor                                                        */
 /* -------------------------------------------------------------------------- */
 
-apiClient.interceptors.request.use(
+axiosInstance.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
 
@@ -110,7 +111,7 @@ function processQueue(error: unknown, token: string | null = null): void {
 /* Response Interceptor                                                       */
 /* -------------------------------------------------------------------------- */
 
-apiClient.interceptors.response.use(
+axiosInstance.interceptors.response.use(
   (response) => response,
 
   async (error: AxiosError) => {
@@ -142,7 +143,7 @@ apiClient.interceptors.response.use(
 
               originalRequest.headers.set("Authorization", `Bearer ${token}`);
 
-              resolve(apiClient(originalRequest));
+              resolve(axiosInstance(originalRequest));
             },
 
             reject,
@@ -185,7 +186,7 @@ apiClient.interceptors.response.use(
           originalRequest.headers = new AxiosHeaders();
         }
         originalRequest.headers.set("Authorization", `Bearer ${accessToken}`);
-        return apiClient(originalRequest);
+        return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
         // Bug fix: do NOT hard-redirect here. The interceptor runs during
@@ -203,5 +204,61 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+/* -------------------------------------------------------------------------- */
+/* Typed Wrapper Layer                                                        */
+/* -------------------------------------------------------------------------- */
+/*
+ * The raw axios instance (axiosInstance) resolves to AxiosResponse<T>.
+ * Every feature API in this codebase is written against the assumption
+ * that apiClient.get/post/put/patch/delete resolve directly to T (the
+ * response body), not the AxiosResponse envelope. Rather than touch every
+ * call site, this thin wrapper preserves the exact same method names/
+ * generics/call signatures while unwrapping `.data` once, here, in one
+ * place. Interceptors, auth refresh logic, headers, and BASE_URL above are
+ * untouched — this only changes what the public surface returns.
+ */
+
+export const apiClient = {
+  get<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return axiosInstance.get<T>(url, config).then((response) => response.data);
+  },
+
+  post<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    return axiosInstance
+      .post<T>(url, data, config)
+      .then((response) => response.data);
+  },
+
+  put<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    return axiosInstance
+      .put<T>(url, data, config)
+      .then((response) => response.data);
+  },
+
+  patch<T = unknown>(
+    url: string,
+    data?: unknown,
+    config?: AxiosRequestConfig,
+  ): Promise<T> {
+    return axiosInstance
+      .patch<T>(url, data, config)
+      .then((response) => response.data);
+  },
+
+  delete<T = unknown>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return axiosInstance
+      .delete<T>(url, config)
+      .then((response) => response.data);
+  },
+};
 
 export default apiClient;

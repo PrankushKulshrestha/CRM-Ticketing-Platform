@@ -21,7 +21,7 @@ export async function getAnalyticsOverview(
     { params: options },
   );
 
-  const data = res.data;
+  const data = res;
 
   if (!data?.data?.metrics || !data?.data?.charts) {
     throw new Error("Invalid analytics response structure");
@@ -38,11 +38,11 @@ export async function getResponseTimeAnalytics(
     { params: months ? { months } : undefined },
   );
 
-  if (!res.data?.data?.months) {
+  if (!res?.data?.months) {
     throw new Error("Invalid response-time analytics response structure");
   }
 
-  return res.data.data;
+  return res.data;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -74,7 +74,7 @@ export async function getAgentPerformanceList(): Promise<AgentPerformanceSummary
   const res = await apiClient.get<{ success: boolean; data: AgentPerformanceSummary[] }>(
     "/analytics/agents",
   );
-  return res.data.data;
+  return res.data;
 }
 
 export async function getAgentPerformanceById(
@@ -83,7 +83,7 @@ export async function getAgentPerformanceById(
   const res = await apiClient.get<{ success: boolean; data: AgentPerformanceByIdResponse }>(
     `/analytics/agents/${id}`,
   );
-  return res.data.data;
+  return res.data;
 }
 
 export interface ResolutionHistogramOptions {
@@ -99,9 +99,9 @@ export async function getResolutionHistogramAnalytics(
     { params: options },
   );
 
-  if (!res.data?.data?.buckets) {
+  if (!res?.data?.buckets) {
     throw new Error("Invalid resolution-histogram response structure");
   }
 
-  return res.data.data;
+  return res.data;
 }

@@ -16,9 +16,9 @@ export const automationApi = {
       `/automation?${buildParams(filters)}`,
     );
     return {
-      success: res.data.success ?? true,
-      data: res.data.data,
-      meta: res.data.meta,
+      success: res.success ?? true,
+      data: res.data,
+      meta: res.meta,
     };
   },
 
@@ -28,7 +28,7 @@ export const automationApi = {
       data: AutomationRule;
     }>(`/automation/${id}`, { enabled });
 
-    return res.data.data;
+    return res.data;
   },
 
   /*
@@ -43,6 +43,6 @@ export const automationApi = {
       data: AutomationRule;
     }>("/automation", payload);
 
-    return res.data.data;
+    return res.data;
   },
 };

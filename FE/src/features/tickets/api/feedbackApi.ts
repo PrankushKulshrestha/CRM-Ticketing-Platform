@@ -24,7 +24,7 @@ export async function getTicketFeedback(ticketId: string): Promise<TicketFeedbac
   const res = await apiClient.get<ApiResponse<TicketFeedback[]>>(
     `/tickets/${ticketId}/feedback`,
   );
-  return res.data.data;
+  return res.data;
 }
 
 export async function requestTicketFeedback(ticketId: string): Promise<void> {

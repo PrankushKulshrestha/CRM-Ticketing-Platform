@@ -48,7 +48,7 @@ export const dashboardApi = {
         });
 
       const payload =
-        response.data;
+        response;
 
       /**
        * Wrapped backend response
