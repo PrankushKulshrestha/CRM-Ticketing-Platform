@@ -152,6 +152,13 @@ export interface Ticket {
   /** Set when this ticket is merged into another ticket. */
   merged_into?: string | null;
   merged_at?: string | null;
+
+  /* Legacy CRM DB custom fields, displayed in the ticket details sidebar. */
+  tkt_custom1?: string;
+  tkt_custom2?: string;
+  tkt_custom3?: string;
+  tkt_custom4?: string;
+  tkt_custom5?: string;
 }
 
 /* -------------------------------------------------------------------------- */

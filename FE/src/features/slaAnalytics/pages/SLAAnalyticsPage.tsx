@@ -344,9 +344,14 @@ export default function SLAAnalyticsPage() {
                         cx="50%"
                         cy="50%"
                         outerRadius={100}
-                        label={({ sla_name, percent }) =>
-                          `${sla_name} (${(percent * 100).toFixed(0)}%)`
-                        }
+                        label={(entry) => {
+                          const payload = entry.payload as
+                            | { sla_name?: string }
+                            | undefined;
+                          const name = payload?.sla_name ?? entry.name ?? "";
+                          const percent = entry.percent ?? 0;
+                          return `${name} (${(percent * 100).toFixed(0)}%)`;
+                        }}
                         labelLine={false}
                       >
                         {bySLA.map((_, i) => (
