@@ -2,6 +2,11 @@
 import { Router, RequestHandler } from "express";
 
 import { authenticate } from "../middlewares/auth.middleware";
+import { validateRequest } from "../middlewares/validation.middleware";
+import {
+  createTicketSchema,
+  updateTicketSchema,
+} from "../validators/ticket.validator";
 import {
   requirePermissions,
   PERMISSIONS,
@@ -89,12 +94,22 @@ router.get("/:id", ...readAccess, getTicketById);
 /**
  * POST /tickets
  */
-router.post("/", ...writeAccess, createTicket);
+router.post(
+  "/",
+  ...writeAccess,
+  validateRequest({ body: createTicketSchema.shape.body }),
+  createTicket,
+);
 
 /**
  * PATCH /tickets/:id
  */
-router.patch("/:id", ...writeAccess, updateTicket);
+router.patch(
+  "/:id",
+  ...writeAccess,
+  validateRequest({ body: updateTicketSchema.shape.body }),
+  updateTicket,
+);
 
 /**
  * DELETE /tickets/:id

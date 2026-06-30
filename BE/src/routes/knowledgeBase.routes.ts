@@ -21,8 +21,8 @@ router.get("/", ...authMiddleware, listArticles);
 router.get("/categories", ...authMiddleware, getCategories);
 router.get("/stats", ...authMiddleware, getStats);
 router.get("/:id", ...authMiddleware, getArticle);
-router.post("/", ...authMiddleware, createArticle);
-router.put("/:id", ...authMiddleware, updateArticle);
+router.post("/", ...manageMiddleware, createArticle);
+router.put("/:id", ...manageMiddleware, updateArticle);
 router.delete("/:id", ...manageMiddleware, deleteArticle);
 router.post("/:id/vote", ...authMiddleware, voteArticle);
 

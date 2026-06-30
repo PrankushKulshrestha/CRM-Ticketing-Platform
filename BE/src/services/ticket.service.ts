@@ -306,7 +306,7 @@ export class TicketService {
 
   static async getTickets(filters: TicketFilters) {
     const page = filters.page ?? 1;
-    const limit = filters.limit ?? 10;
+    const limit = Math.min(filters.limit ?? 10, 100);
     const skip = (page - 1) * limit;
 
     const query = buildQuery(filters);

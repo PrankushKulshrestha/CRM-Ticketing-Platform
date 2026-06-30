@@ -2,6 +2,8 @@
 import { Router } from "express";
 
 import { authenticate } from "../middlewares/auth.middleware";
+import { validateRequest } from "../middlewares/validation.middleware";
+import { createUserSchema, updateUserSchema } from "../validators/user.validator";
 import {
   requirePermissions,
   PERMISSIONS,
@@ -48,6 +50,7 @@ router.post(
   "/",
   withAuth,
   requirePermissions([PERMISSIONS.USERS_CREATE]),
+  validateRequest({ body: createUserSchema }),
   createUser,
 );
 
@@ -113,6 +116,7 @@ router.patch(
   "/:id",
   withAuth,
   requirePermissions([PERMISSIONS.USERS_UPDATE]),
+  validateRequest({ body: updateUserSchema.omit({ id: true }) }),
   updateUser,
 );
 

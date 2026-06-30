@@ -10,6 +10,8 @@ import {
 } from "../controllers/auth.controller";
 
 import { authenticate } from "../middlewares/auth.middleware";
+import { validateRequest } from "../middlewares/validation.middleware";
+import { registerSchema } from "../validators/auth.validator";
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +37,7 @@ const requireAuth = authenticate;
 |--------------------------------------------------------------------------
 */
 
-router.post("/register", register);
+router.post("/register", validateRequest({ body: registerSchema }), register);
 
 router.post("/login", login);
 

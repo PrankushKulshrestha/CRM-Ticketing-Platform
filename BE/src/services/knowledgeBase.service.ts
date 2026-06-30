@@ -43,8 +43,10 @@ export async function searchArticles(opts: KBSearchOptions) {
     tags,
     is_published = true,
     page = 1,
-    limit = 20,
+    limit: rawLimit = 20,
   } = opts;
+
+  const limit = Math.min(rawLimit, 100);
 
   const filter: Record<string, unknown> = { is_published };
 
