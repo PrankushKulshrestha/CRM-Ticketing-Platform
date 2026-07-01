@@ -3,6 +3,8 @@ import ThemeToggle from "@/components/ThemeToggle";
 import SLASettings from "../components/SLASettings";
 import TicketWindowSettings from "../components/TicketWindowSettings";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { UserPlus } from "lucide-react";
+import CreateUserForm from "@/features/users/components/CreateUserForm";
 
 export default function SettingsPage() {
   const { user } = useAuth();
@@ -50,6 +52,23 @@ export default function SettingsPage() {
             </p>
           </div>
           <TicketWindowSettings />
+        </section>
+      )}
+
+      {/* Agent Settings — admin only: create new agent/manager/admin accounts */}
+      {isAdmin && (
+        <section className="rounded-2xl border p-5 space-y-4">
+          <div className="flex items-center gap-2">
+            <UserPlus className="h-5 w-5 text-muted-foreground" />
+            <div>
+              <h2 className="text-lg font-semibold">Agent Settings</h2>
+              <p className="text-sm text-muted-foreground">
+                Create new agent, manager, or admin accounts. Public self-registration is
+                disabled — this is the only way to add users to the CRM.
+              </p>
+            </div>
+          </div>
+          <CreateUserForm />
         </section>
       )}
 

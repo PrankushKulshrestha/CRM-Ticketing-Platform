@@ -158,7 +158,7 @@ export async function processInboundEmail(
       tkt_type:               classification.category,
       cat_id:                 categoryResult.catId,
       sub_cat_id:             categoryResult.subCatId,
-      tkt_status:             TICKET_STATUS.OPEN,
+      tkt_status:             TICKET_STATUS.NEW,
       color_code:             PRIORITY_TO_COLOR_CODE[classification.priority],
       email_fingerprint:      fingerprint,
       email_uid:              email.uid,

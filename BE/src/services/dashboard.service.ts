@@ -532,7 +532,7 @@ export async function getDashboardData(
         agentPerformance: [
           {
             $group: {
-              _id: { $ifNull: ["$tkt_user", "Unassigned"] },
+              _id: { $ifNull: ["$tkt_assigned_to", null] },
               totalTickets: { $sum: 1 },
               resolvedTickets: {
                 $sum: { $cond: [{ $in: ["$tkt_status", CLOSED_STATUSES] }, 1, 0] },
@@ -542,6 +542,27 @@ export async function getDashboardData(
               },
             },
           },
+          // FIX: previously grouped by "$tkt_user", an unused legacy string
+          // field left over from the MySQL migration — always empty, so
+          // every ticket fell into "Unassigned" no matter who it was really
+          // assigned to. Group by the real tkt_assigned_to ref instead and
+          // resolve it to the agent's name.
+          {
+            $lookup: {
+              from: "users",
+              localField: "_id",
+              foreignField: "_id",
+              as: "agent",
+            },
+          },
+          {
+            $set: {
+              _id: {
+                $ifNull: [{ $arrayElemAt: ["$agent.name", 0] }, "Unassigned"],
+              },
+            },
+          },
+          { $project: { agent: 0 } },
           { $sort: { resolvedTickets: -1 } },
         ],
 
@@ -579,12 +600,22 @@ export async function getDashboardData(
           { $sort: { update_date: -1 } },
           { $limit: 10 },
           {
+            $lookup: {
+              from: "users",
+              localField: "tkt_assigned_to",
+              foreignField: "_id",
+              as: "agent",
+            },
+          },
+          {
             $project: {
               _id: 0,
               ticketNumber: { $toString: "$_id" },
               title: { $ifNull: ["$email_subject", "Untitled Ticket"] },
               customer: { $ifNull: ["$tkt_customer_name", "Unknown Customer"] },
-              assignedTo: { $ifNull: ["$tkt_user", "Unassigned"] },
+              assignedTo: {
+                $ifNull: [{ $arrayElemAt: ["$agent.name", 0] }, "Unassigned"],
+              },
               category: { $ifNull: ["$cat_id", "Uncategorized"] },
               subCategory: { $ifNull: ["$sub_cat_id", "Unknown"] },
               status: { $ifNull: ["$tkt_status", "unknown"] },

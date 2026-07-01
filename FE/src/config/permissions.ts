@@ -51,6 +51,9 @@ export const PERMISSIONS = {
   // Settings
   SETTINGS_MANAGE: "settings:manage",
 
+  // Users (admin-only: create/manage agent accounts)
+  USERS_MANAGE: "users:manage",
+
   // Automation
   AUTOMATION_MANAGE: "automation:manage",
 } as const;
@@ -84,6 +87,7 @@ export const ROLE_PERMISSIONS: Readonly<
 
     PERMISSIONS.SETTINGS_MANAGE,
     PERMISSIONS.AUTOMATION_MANAGE,
+    PERMISSIONS.USERS_MANAGE,
   ]),
 
   [USER_ROLES.MANAGER]: Object.freeze([

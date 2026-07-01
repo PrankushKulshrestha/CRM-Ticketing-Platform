@@ -22,7 +22,7 @@ const initialForm: CreateTicketPayload = {
   description: "",
   tkt_customer_name: "",
   eml_ticket_created_for: "",
-  tkt_status: "open",
+  tkt_status: "new",
   tkt_type: "General",
   color_code: 2,
   cat_id: "",
@@ -173,7 +173,7 @@ export default function CreateTicketPage() {
               <div className="space-y-2">
                 <Label>Status</Label>
                 <Select
-                  value={form.tkt_status || "open"}
+                  value={form.tkt_status || "new"}
                   onValueChange={(v) =>
                     handleChange(
                       "tkt_status",

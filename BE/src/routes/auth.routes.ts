@@ -2,7 +2,7 @@
 import { Router } from "express";
 
 import {
-  register,
+  // register, // disabled — see commented-out route below
   login,
   logout,
   getCurrentUser,
@@ -11,7 +11,8 @@ import {
 
 import { authenticate } from "../middlewares/auth.middleware";
 import { validateRequest } from "../middlewares/validation.middleware";
-import { registerSchema, loginSchema } from "../validators/auth.validator";
+import { loginSchema } from "../validators/auth.validator";
+// import { registerSchema } from "../validators/auth.validator"; // disabled with route above
 import { rateLimitMiddleware } from "../middlewares/rateLimit.middleware";
 
 // SECURITY: the global app-wide rate limiter (1000 req / 15 min) is far too
@@ -47,12 +48,17 @@ const requireAuth = authenticate;
 |--------------------------------------------------------------------------
 */
 
-router.post(
-  "/register",
-  authRateLimit,
-  validateRequest({ body: registerSchema }),
-  register,
-);
+// SECURITY: Public self-registration is disabled. User accounts are now
+// created exclusively by admins via the authenticated, RBAC-gated
+// POST /users endpoint (requires USERS_CREATE permission). Route and
+// controller are kept in place but commented out rather than deleted,
+// in case a future product decision reintroduces public sign-up.
+// router.post(
+//   "/register",
+//   authRateLimit,
+//   validateRequest({ body: registerSchema }),
+//   register,
+// );
 
 router.post(
   "/login",

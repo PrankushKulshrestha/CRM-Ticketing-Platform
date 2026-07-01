@@ -10,8 +10,8 @@ import type {
   LoginResponse,
   LogoutResponse,
   RefreshTokenResponse,
-  RegisterPayload,
-  RegisterResponse,
+  // RegisterPayload, // disabled — see authApi.register below
+  // RegisterResponse,
 } from "../types/auth.types";
 
 /* -------------------------------------------------------------------------- */
@@ -33,17 +33,20 @@ export const authApi = {
   },
 
   /* ------------------------------------------------------------------------ */
-  /* Register                                                                  */
+  /* Register — DISABLED (SECURITY)                                           */
+  /* Public self-registration is no longer allowed. Users are created by      */
+  /* admins only, via userApi.createUser -> POST /users (RBAC-gated).         */
+  /* Kept commented out, not deleted, in case product decisions change.       */
   /* ------------------------------------------------------------------------ */
 
-  async register(payload: RegisterPayload): Promise<RegisterResponse> {
-    const response = await apiClient.post<RegisterResponse>(
-      "/auth/register",
-      payload,
-    );
-
-    return response;
-  },
+  // async register(payload: RegisterPayload): Promise<RegisterResponse> {
+  //   const response = await apiClient.post<RegisterResponse>(
+  //     "/auth/register",
+  //     payload,
+  //   );
+  //
+  //   return response;
+  // },
 
   /* ------------------------------------------------------------------------ */
   /* Current User                                                              */
@@ -85,8 +88,7 @@ export const authApi = {
 /* Named Exports                                                              */
 /* -------------------------------------------------------------------------- */
 
-export const { login, register, logout, getCurrentUser, refreshToken } =
-  authApi;
+export const { login, logout, getCurrentUser, refreshToken } = authApi;
 
 /* -------------------------------------------------------------------------- */
 /* Default Export                                                             */

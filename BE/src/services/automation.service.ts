@@ -148,6 +148,18 @@ export async function applyAutomationRules(
       logger.info("[AUTOMATION_RULE_APPLIED]", { ruleId: rule._id, name: rule.name, ticketId });
     }
 
+    // Assigned tickets are never "new" — that status is reserved for
+    // unassigned tickets within the admin-configured window. If this rule
+    // run assigns an agent and the ticket is currently "new" (and no rule
+    // action already set a different status), bump it to "open" now.
+    if (
+      updates.tkt_assigned_to &&
+      !("tkt_status" in updates) &&
+      ticket.tkt_status === "new"
+    ) {
+      updates.tkt_status = "open";
+    }
+
     if (Object.keys(updates).length) {
       await TicketModel.updateOne(
         { _id: ticketId },

@@ -14,7 +14,7 @@ import {
 } from "./sla.service";
 import { applyAutomationRules } from "./automation.service";
 import { requestFeedback } from "./feedback.service";
-import { isWithinNewTicketWindow } from "./systemSettings.service";
+import { isWithinNewTicketWindow, expireStaleNewTickets } from "./systemSettings.service";
 
 import {
   TICKET_STATUS,
@@ -306,6 +306,10 @@ export class TicketService {
   /* ---------------------------------------------------------------------- */
 
   static async getTickets(filters: TicketFilters) {
+    // Lazily transition any "new" ticket past the admin-configured window
+    // to "open" before reading — keeps status accurate without a cron job.
+    await expireStaleNewTickets();
+
     const page = filters.page ?? 1;
     const limit = Math.min(filters.limit ?? 10, 100);
     const skip = (page - 1) * limit;
@@ -379,6 +383,8 @@ export class TicketService {
   /* ---------------------------------------------------------------------- */
 
   static async getTicketById(id: string): Promise<Ticket> {
+    await expireStaleNewTickets();
+
     const doc = await TicketModel.findById(id)
       .select(SAFE_FIELDS)
       .populate("tkt_assigned_to", "name email role")
@@ -429,12 +435,19 @@ export class TicketService {
     const colorCode = payload.color_code ?? TICKET_PRIORITY.MEDIUM;
 
     // Tickets created within the admin-configured window default to "new".
-    // If the caller explicitly passes a status, honour that instead.
-    const defaultStatus = payload.tkt_status
+    // If the caller explicitly passes a status, honour that instead — except
+    // an assigned ticket can never be "new" (that status is reserved for
+    // unassigned tickets), matching the same rule enforced on assignment
+    // via automation and manual updates.
+    let defaultStatus = payload.tkt_status
       ? payload.tkt_status
       : (await isWithinNewTicketWindow(now))
         ? TICKET_STATUS.NEW
         : TICKET_STATUS.OPEN;
+
+    if (payload.tkt_assigned_to && defaultStatus === TICKET_STATUS.NEW) {
+      defaultStatus = TICKET_STATUS.OPEN;
+    }
 
     const created = await TicketModel.create({
       _id,
@@ -539,6 +552,17 @@ export class TicketService {
       }
 
       previousStatus = existing.tkt_status;
+
+      // Assigning an agent to a "new" ticket takes it out of the unassigned
+      // window immediately — it's no longer "new", it's "open" — unless the
+      // caller also explicitly requested a different status in this same call.
+      if (
+        normalizedPayload.tkt_assigned_to &&
+        !normalizedPayload.tkt_status &&
+        previousStatus === TICKET_STATUS.NEW
+      ) {
+        normalizedPayload.tkt_status = TICKET_STATUS.OPEN;
+      }
     }
 
     if (normalizedPayload.tkt_status) {

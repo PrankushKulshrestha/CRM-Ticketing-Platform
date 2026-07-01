@@ -1,6 +1,8 @@
 import SystemSettingsModel, {
   type ISystemSettings,
 } from "../models/SystemSettings";
+import TicketModel from "../models/Ticket";
+import { TICKET_STATUS } from "../constants/constants";
 import type mongoose from "mongoose";
 
 /* -------------------------------------------------------------------------- */
@@ -53,4 +55,28 @@ export async function isWithinNewTicketWindow(createdAt: Date): Promise<boolean>
   const settings = await getSettings();
   const windowMs = settings.new_ticket_window_hours * 60 * 60 * 1000;
   return Date.now() - createdAt.getTime() <= windowMs;
+}
+
+/**
+ * Lazily flips any ticket still marked "new" whose creation time has fallen
+ * outside the admin-configured window over to "open" — the same
+ * lazy-on-read pattern used for SLA evaluation, so no cron/scheduler is
+ * needed. Cheap: a single indexed updateMany, safe to call on every ticket
+ * list/detail read.
+ */
+export async function expireStaleNewTickets(): Promise<void> {
+  const settings = await getSettings();
+  const windowMs = settings.new_ticket_window_hours * 60 * 60 * 1000;
+  const cutoff = new Date(Date.now() - windowMs);
+
+  await TicketModel.updateMany(
+    {
+      tkt_status: TICKET_STATUS.NEW,
+      $or: [
+        { created_date: { $lte: cutoff } }, // window expired
+        { tkt_assigned_to: { $ne: null } }, // assigned tickets are never "new"
+      ],
+    },
+    { $set: { tkt_status: TICKET_STATUS.OPEN } },
+  );
 }
