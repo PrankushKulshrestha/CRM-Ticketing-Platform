@@ -152,6 +152,7 @@ export interface CreateTicketPayload {
 
   tkt_customer_mobile?: string;
   tkt_user?: string;
+  tkt_assigned_to?: string | null;
 
   color_code?: number;
 }
