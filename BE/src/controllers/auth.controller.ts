@@ -93,7 +93,7 @@ const buildAuthResponse = (user: any) => {
 
 export const register = asyncHandler(
   async (req: Request, res: Response) => {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
       throw new ApiError(
@@ -112,11 +112,16 @@ export const register = asyncHandler(
       throw new ApiError(HTTP_STATUS.CONFLICT, "User already exists");
     }
 
+    // SECURITY: role is never taken from the request body here. Public
+    // self-registration must always create a low-privilege "agent" account;
+    // an unauthenticated caller could otherwise pass role: "admin" and
+    // grant themselves full access. Elevating a user's role is only
+    // permitted via the authenticated, RBAC-gated PATCH /users/:id route.
     const user = await User.create({
       name: name.trim(),
       email: normalizedEmail,
       password,
-      role: role ?? USER_ROLES.AGENT,
+      role: USER_ROLES.AGENT,
     });
 
     logger.info("[AUTH_REGISTER]", {

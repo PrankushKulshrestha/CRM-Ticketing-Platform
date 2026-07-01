@@ -82,6 +82,7 @@ export const CRM_ROUTES = {
   TEAMS: "/teams",
   AUTOMATION: "/automation",
   KNOWLEDGE_BASE: "/knowledge-base",
+  EMAIL_TEMPLATES: "/email-templates",
 } as const;
 
 /* -------------------------------------------------------------------------- */
@@ -180,6 +181,7 @@ const routes = {
   teams: CRM_ROUTES.TEAMS,
   automation: CRM_ROUTES.AUTOMATION,
   knowledgeBase: CRM_ROUTES.KNOWLEDGE_BASE,
+  emailTemplates: CRM_ROUTES.EMAIL_TEMPLATES,
 
   settings: SETTINGS_ROUTES.ROOT,
 

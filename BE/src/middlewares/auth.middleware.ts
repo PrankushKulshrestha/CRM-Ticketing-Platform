@@ -82,7 +82,8 @@ export function authenticate(
   try {
     const decoded = jwt.verify(
       token,
-      env.jwt.accessSecret
+      env.jwt.accessSecret,
+      { algorithms: ["HS256"] }
     ) as JwtPayload;
 
     req.user = {

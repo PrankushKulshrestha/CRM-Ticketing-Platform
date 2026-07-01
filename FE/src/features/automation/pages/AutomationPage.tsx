@@ -55,6 +55,19 @@ const ACTION_LABELS: Record<AutomationActionType, string> = {
   add_tag: "Add tag",
 };
 
+// Mirrors the catId values produced by the backend classifier
+// (be/src/email/shared/ticket-classifier.ts). Kept in sync manually since
+// there's no shared taxonomy endpoint yet.
+const TICKET_CATEGORIES = [
+  "Billing",
+  "Technical",
+  "Sales",
+  "Feedback",
+  "Account",
+  "Complaint",
+  "Uncategorized",
+];
+
 function CreateRuleDialog() {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
@@ -62,6 +75,7 @@ function CreateRuleDialog() {
   const [trigger, setTrigger] = useState<AutomationTrigger>("ticket_created");
   const [actionType, setActionType] = useState<AutomationActionType>("assign_agent");
   const [actionValue, setActionValue] = useState("");
+  const [category, setCategory] = useState<string>("any");
 
   const { mutate, isPending, error } = useCreateAutomationRule();
   const { data: teamsData, isLoading: isLoadingTeams } = useTeams({
@@ -77,6 +91,11 @@ function CreateRuleDialog() {
         name: name.trim(),
         description: description.trim() || undefined,
         trigger,
+        // Only scope the rule to a category when one is picked — leaving it
+        // on "Any category" runs the action for every ticket on this
+        // trigger, which is intentional for broad rules but should be an
+        // explicit choice, not the accidental default.
+        conditions: category !== "any" ? { cat_id: category } : undefined,
         actions: [{ type: actionType, value: actionValue.trim() }],
         enabled: true,
       },
@@ -86,6 +105,7 @@ function CreateRuleDialog() {
           setName("");
           setDescription("");
           setActionValue("");
+          setCategory("any");
         },
       },
     );
@@ -151,6 +171,28 @@ function CreateRuleDialog() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Only for category</Label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any category</SelectItem>
+                    {TICKET_CATEGORIES.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {category === "any" && (
+                  <p className="text-xs text-muted-foreground">
+                    Runs for every ticket on this trigger.
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">

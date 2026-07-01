@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import TicketModel, { TICKET_PRIORITY, type TicketPriority } from "../models/Ticket";
 import TeamModel from "../models/Team";
 import { ApiError } from "../utils/ApiError";
+import { escapeRegex } from "../utils/regex.utils";
 import { AuditLog } from "../models/AuditLog";
 import {
   createSLAForTicket,
@@ -279,7 +280,7 @@ const buildQuery = (filters: TicketFilters): Record<string, unknown> => {
   if (filters.tkt_user) query.tkt_user = filters.tkt_user;
 
   if (filters.search?.trim()) {
-    const s = filters.search.trim();
+    const s = escapeRegex(filters.search.trim());
 
     query.$or = [
       { tkt_number: { $regex: s, $options: "i" } },

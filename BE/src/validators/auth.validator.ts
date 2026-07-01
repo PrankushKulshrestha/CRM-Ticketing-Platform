@@ -52,8 +52,6 @@ export const registerSchema = z.object({
   email: emailSchema,
 
   password: passwordSchema,
-
-  role: z.string().optional().default("agent"),
 });
 
 /*

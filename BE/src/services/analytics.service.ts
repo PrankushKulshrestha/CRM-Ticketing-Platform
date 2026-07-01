@@ -22,7 +22,7 @@ interface SLAByLevelRaw {
 
 interface AggregationResult {
   totalTickets: { count: number }[];
-  closedTicketsCount: { count: number }[];
+  slaTrackedCount: { count: number }[];
   resolvedToday: { count: number }[];
   avgResolution: { avg: number }[];
   breachedSla: { count: number }[];
@@ -175,8 +175,16 @@ export async function getDashboardAnalytics(): Promise<DashboardAnalyticsRespons
          * chance to breach yet) understated compliance whenever there was
          * any backlog of new tickets.
          */
-        closedTicketsCount: [
-          { $match: { completionDate: { $ne: null } } },
+        /*
+         * FIX: this must match dashboard.service.ts's slaCompliance denominator
+         * exactly, or the two pages show different SLA numbers for the same
+         * period. Compliance is measured against every ticket that has an SLA
+         * tracker attached (open or closed) — a ticket can breach its SLA
+         * while still open, so restricting to closed tickets understated
+         * breaches and inflated compliance.
+         */
+        slaTrackedCount: [
+          { $match: { slaStatus: { $ne: null } } },
           { $count: "count" },
         ],
 
@@ -260,7 +268,7 @@ export async function getDashboardAnalytics(): Promise<DashboardAnalyticsRespons
   /* Base Metrics                                                          */
   /* ---------------------------------------------------------------------- */
 
-  const closedTicketsCount = safeCount(data.closedTicketsCount);
+  const slaTrackedCount = safeCount(data.slaTrackedCount);
   const resolvedToday = safeCount(data.resolvedToday);
   const breachedSla = safeCount(data.breachedSla);
 
@@ -345,9 +353,9 @@ export async function getDashboardAnalytics(): Promise<DashboardAnalyticsRespons
     breachedSla,
 
     slaCompliance:
-      closedTicketsCount === 0
+      slaTrackedCount === 0
         ? 100
-        : Number((((closedTicketsCount - breachedSla) / closedTicketsCount) * 100).toFixed(1)),
+        : Number((((slaTrackedCount - breachedSla) / slaTrackedCount) * 100).toFixed(1)),
 
     slaByLevel,
 

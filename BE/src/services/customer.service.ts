@@ -2,6 +2,7 @@
 import mongoose, { type PipelineStage } from "mongoose";
 import TicketModel from "../models/Ticket";
 import { ApiError } from "../utils/ApiError";
+import { escapeRegex } from "../utils/regex.utils";
 import { getPagination } from "../utils/pagination";
 import { TICKET_STATUS } from "../constants/constants";
 
@@ -61,7 +62,7 @@ export class CustomerService {
     };
 
     if (filters.search) {
-      const re = new RegExp(filters.search.trim(), "i");
+      const re = new RegExp(escapeRegex(filters.search.trim()), "i");
       match.$or = [{ tkt_customer_name: re }, { eml_ticket_created_for: re }];
     }
 

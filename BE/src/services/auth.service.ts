@@ -77,7 +77,7 @@ class AuthService {
       name: data.name,
       email,
       password: data.password,
-      role: data.role ?? "agent",
+      role: "agent",
     });
 
     logger.info("[AUTH_REGISTER]", { userId: user._id });

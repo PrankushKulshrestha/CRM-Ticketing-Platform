@@ -54,6 +54,7 @@ import ReportsPage from "@/features/reports/pages/ReportsPage";
 import AutomationPage from "@/features/automation/pages/AutomationPage";
 import SettingsPage from "@/features/settings/pages/SettingsPage";
 import KnowledgeBasePage from "@/features/knowledgeBase/pages/KnowledgeBasePage";
+import EmailTemplatesPage from "@/features/emailTemplates/pages/EmailTemplatesPage";
 import SLAAnalyticsPage from "@/features/slaAnalytics/pages/SLAAnalyticsPage";
 import AgentScoringPage from "@/features/agentScoring/pages/AgentScoringPage";
 
@@ -103,6 +104,7 @@ function ProtectedRoutes(): ReactElement {
       <Route path={routes.automation} element={<AutomationPage />} />
       <Route path={routes.settings} element={<SettingsPage />} />
       <Route path={routes.knowledgeBase} element={<KnowledgeBasePage />} />
+      <Route path={routes.emailTemplates} element={<EmailTemplatesPage />} />
       <Route path={routes.slaAnalytics} element={<SLAAnalyticsPage />} />
       <Route path="/analytics/agent-scoring" element={<AgentScoringPage />} />
     </Route>

@@ -73,6 +73,10 @@ const ticketBaseSchema = z.object({
   remarks_n: z.string().optional(),
 
   tkt_type: optionalString(45),
+
+  tkt_assigned_to: z.string().nullable().optional(),
+  tkt_team: z.string().nullable().optional(),
+  customer_satisfaction: z.number().nullable().optional(),
 });
 
 /*

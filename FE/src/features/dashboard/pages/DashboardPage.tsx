@@ -248,15 +248,13 @@ export default function DashboardPage() {
         ? Math.round((metrics.openTickets / totalTickets) * 100)
         : 0;
 
-    const compliance =
-      totalTickets > 0
-        ? Number(
-            (
-              ((totalTickets - metrics.slaBreaches) / totalTickets) *
-              100
-            ).toFixed(2),
-          )
-        : 100;
+    // Use the backend-computed value directly — it's the single source of
+    // truth (also used by the Analytics page), and correctly divides by
+    // tickets that actually have an SLA tracker attached rather than every
+    // ticket ever created. Recomputing here with (total - breaches)/total
+    // previously gave a different, wrong number whenever there was a
+    // backlog of brand-new tickets with no SLA applied yet.
+    const compliance = metrics.slaCompliance;
 
     return [
       {

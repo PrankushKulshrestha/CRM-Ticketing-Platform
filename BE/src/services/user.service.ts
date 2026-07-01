@@ -4,6 +4,7 @@ import User, { type UserEntity } from "../models/User";
 import logger from "../config/logger";
 
 import { ApiError } from "../utils/ApiError";
+import { escapeRegex } from "../utils/regex.utils";
 import { HTTP_STATUS, USER_ROLES } from "../constants/constants";
 import { getPagination } from "../utils/pagination";
 
@@ -67,7 +68,7 @@ function buildUserQuery(filters: UserFilters): Record<string, unknown> {
 
   if (filters.search?.trim()) {
     const regex = {
-      $regex: filters.search.trim(),
+      $regex: escapeRegex(filters.search.trim()),
       $options: "i",
     };
 

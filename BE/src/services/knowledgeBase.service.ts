@@ -2,6 +2,7 @@ import KnowledgeBaseModel, {
   type IKnowledgeBase,
 } from "../models/KnowledgeBase";
 import type mongoose from "mongoose";
+import { escapeRegex } from "../utils/regex.utils";
 
 /* -------------------------------------------------------------------------- */
 /* Knowledge Base Service                                                      */
@@ -63,9 +64,9 @@ export async function searchArticles(opts: KBSearchOptions) {
         ...filter,
         $or: [
           { $text: { $search: query } },
-          { keywords: { $regex: query, $options: "i" } },
-          { title: { $regex: query, $options: "i" } },
-          { tags: { $regex: query, $options: "i" } },
+          { keywords: { $regex: escapeRegex(query), $options: "i" } },
+          { title: { $regex: escapeRegex(query), $options: "i" } },
+          { tags: { $regex: escapeRegex(query), $options: "i" } },
         ],
       },
       { score: { $meta: "textScore" } }
