@@ -309,7 +309,7 @@ function TemplateManager({ open, onClose, onSelect }: TemplateManagerProps) {
                         <div className="font-medium">{t.name}</div>
                         {t.description && <div className="text-xs text-muted-foreground">{t.description}</div>}
                       </td>
-                      <td className="py-2.5 text-muted-foreground max-w-[200px] truncate">{t.subject}</td>
+                      <td className="py-2.5 text-muted-foreground max-w-50 truncate">{t.subject}</td>
                       <td className="py-2.5">
                         <Badge className={`text-xs ${CATEGORY_COLORS[t.category] ?? ""}`}>{t.category}</Badge>
                       </td>

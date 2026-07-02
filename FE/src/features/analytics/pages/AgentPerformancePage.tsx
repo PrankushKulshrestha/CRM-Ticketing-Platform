@@ -224,7 +224,7 @@ export default function AgentPerformancePage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left min-w-[500px]">
+          <table className="w-full text-left min-w-125">
             <thead>
               <tr className="border-b border-border/40 bg-muted/40">
                 <th className="px-3 py-2.5 text-xs font-medium text-muted-foreground w-8 text-center">#</th>
